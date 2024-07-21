@@ -60,8 +60,8 @@ jobs:
             --parameters commands='[
               "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ steps.login-aws-ecr.outputs.registry }}",
               "docker pull ${{ steps.login-aws-ecr.outputs.registry}}/${{secrets.AWS_ECR_REPO}}:latest",
-              "docker run --rm -d -p 3000:3000 --name api ${{ steps.login-aws-ecr.outputs.registry}}/${{secrets.AWS_ECR_REPO}}:latest"
-            ]' \
+              "docker run --rm -d -p 3003:3003 --name api ${{ steps.login-aws-ecr.outputs.registry}}/${{secrets.AWS_ECR_REPO}}:latest"
+              ]' \
             --query 'Command.CommandId' \
             --output text)
 
@@ -79,10 +79,9 @@ jobs:
             --query "CommandInvocations[0].StatusDetails" \
             --output text)
 
-            if [ $status == "Success" ]; then
+            if [ "$status" == "Success" ]; then
               echo "Command executed successfully"
             else 
               echo "Command failed"
               exit 1
             fi
-          
