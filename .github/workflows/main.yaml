@@ -51,5 +51,12 @@ jobs:
           with:
             region: ${{ secrets.AWS_REGION }}
             role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-        - name: Echo
-          run: echo ${{ steps.login-aws-ecr.outputs.registry }}
+        - name: Deploy to EC2
+          run: |
+            aws ssm send-command \
+            --document-name "AWS-RunShellScript" \
+            --targets "Key=instanceids,Values=i-1234567890abcedf0" \
+            --comment "Pull Docker image and run it"
+            --parameters 'commands=[
+              "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ steps.login-aws-ecr.outputs.registry }}"
+            ]' \
