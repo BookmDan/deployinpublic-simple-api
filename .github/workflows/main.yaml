@@ -72,13 +72,10 @@ jobs:
             --instance-id i-06d6777d0e34c8097
 
             status=$(aws ssm list-command-invocations \
-            --query "Commands[0].StatusDetails" \
+            --command-id $command_id \
+            --details \ 
+            --query "CommandInvocations[0].StatusDetails" \
             --output text)
-
-
-            # --command-id $command_id \
-            # --details)
-
 
             echo "$status"
 
