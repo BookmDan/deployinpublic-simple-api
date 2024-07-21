@@ -61,7 +61,7 @@ jobs:
             --query 'Command.CommandId' \
             --output text)
 
-            # echo "Command ID: $command_id"
+            echo "Command ID: $command_id"
 
             aws ssm wait command-executed \
             --command-id $command_id \
