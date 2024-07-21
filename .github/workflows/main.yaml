@@ -63,11 +63,11 @@ jobs:
 
             aws ssm wait command-executed \
             --command-id $command_id \
-            --instance-id i-0818f0615bfb23c1a
+            --instance-id i-0818f0615bfb23c1a || true 
 
             aws ssm wait command-executed \
             --command-id $command_id \
-            --instance-id i-06d6777d0e34c8097
+            --instance-id i-06d6777d0e34c8097 || true 
 
             status=$(aws ssm list-command-invocations \
             --command-id $command_id \
