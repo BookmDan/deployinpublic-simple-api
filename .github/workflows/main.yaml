@@ -61,8 +61,6 @@ jobs:
             --query 'Command.CommandId' \
             --output text)
 
-            echo "Command ID: $command_id"
-
             aws ssm wait command-executed \
             --command-id $command_id \
             --instance-id i-0818f0615bfb23c1a
@@ -83,7 +81,7 @@ jobs:
               echo "Command executed successfully"
             else 
               echo "Command failed"
-              echo "Error: "$status"
+              echo "Error: $status"
               exit 1
             fi
           
