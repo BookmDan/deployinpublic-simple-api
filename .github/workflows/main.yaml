@@ -82,10 +82,10 @@ jobs:
 
             echo "$status"
 
-            if [ "$status" == "Success: ]; then
+            if [ "$status" == "Success:" ]; then
               echo "Command executed successfully"
             else 
-              echo "Command filaed"
+              echo "Command failed"
             fi
 
           
