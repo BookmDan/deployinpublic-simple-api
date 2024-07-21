@@ -75,7 +75,7 @@ jobs:
             --query "CommandInvocations[0].StatusDetails" \
             --output text)
 
-            echo "$status"
+            # echo "$status"
 
             if [ $status == "Success" ]; then
               echo "Command executed successfully"
