@@ -71,13 +71,21 @@ jobs:
             --command-id $command_id \
             --instance-id i-06d6777d0e34c8097
 
-            commandOutput=$(aws ssm list-command-invocations \
-            --command-id $command_id \
-            --details)
+            status=$(aws ssm list-command-invocations \
+            --query "Commands[0].StatusDetails" \
+            --output text)
 
 
-            echo "$commandOutput"
+            # --command-id $command_id \
+            # --details)
 
-        # - name: Wait for command to finish
-          # run: |
+
+            echo "$status"
+
+            if [ "$status" == "Success: ]; then
+              echo "Command executed successfully"
+            else 
+              echo "Command filaed"
+            fi
+
           
