@@ -57,7 +57,7 @@ jobs:
             --document-name "AWS-RunShellScript" \
             --targets "Key=instanceids,Values=i-0818f0615bfb23c1a,i-06d6777d0e34c8097" \
             --comment "Pull Docker image and run it" \
-            --parameters commands='["aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin potato"]' \
+            --parameters commands='["aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ steps.login-aws-ecr.outputs.registry }}"]' \
             --query 'Command.CommandId' \
             --output text)
 
