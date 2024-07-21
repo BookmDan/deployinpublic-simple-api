@@ -71,9 +71,6 @@ jobs:
 
             status=$(aws ssm list-command-invocations \
             --command-id $command_id \
-
-            status=$(aws ssm list-command-invocations \
-            --command-id $command_id \
             --details \
             --query "CommandInvocations[0].StatusDetails" \
             --output text)
