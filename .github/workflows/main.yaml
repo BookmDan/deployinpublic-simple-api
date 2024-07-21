@@ -51,5 +51,5 @@ jobs:
           with:
             region: ${{ secrets.AWS_REGION }}
             role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-        -name: Echo
+        - name: Echo
           run: echo ${{ steps.login-aws-ecr.outputs.registry }}
