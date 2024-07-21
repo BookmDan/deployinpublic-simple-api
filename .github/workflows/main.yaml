@@ -64,7 +64,7 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          instance_id="i-0222c067af589f83c"
+          instance_id="i-079b8a960de1eb7e7"
           ecr_registry="${{ steps.login-aws-ecr.outputs.registry }}"
           ecr_repository="${{ secrets.AWS_ECR_REPO }}"
           image_tag="latest"
