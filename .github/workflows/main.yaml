@@ -67,6 +67,7 @@ jobs:
               "aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin $ecr_registry",
               "echo Stopping existing Docker container",
               "docker stop api || true",
+              "docker rm api || true",
               "echo Pulling Docker image",
               "docker pull ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.AWS_ECR_REPO }}",
               "echo Running Docker container",
