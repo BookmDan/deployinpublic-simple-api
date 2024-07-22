@@ -64,6 +64,7 @@ jobs:
             --comment "Pull Docker image and run it" \
             --parameters commands='[
               "aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin $ecr_registry",
+              "docker stop api || true",
               "docker pull $image",
               "docker run -d -p 3000:3000 --name api $image"
               ]' \
