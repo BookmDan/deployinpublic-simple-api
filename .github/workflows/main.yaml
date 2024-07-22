@@ -60,7 +60,7 @@ jobs:
 
             command_id=$(aws ssm send-command \
             --document-name "AWS-RunShellScript" \
-            --targets "Key=instanceids,Values=i-079b8a960de1eb7e7,i-03e076b90fc93fcb1" \
+            --targets "Key=instanceids,Values=${{secrets.INSTANCE_ID_1}},${{secrets.INSTANCE_ID_2}}" \
             --comment "Pull Docker image and run it" \
             --parameters commands='[
               "echo Logging into ECR",
@@ -80,11 +80,11 @@ jobs:
 
             aws ssm wait command-executed \
             --command-id $command_id \
-            --instance-id i-079b8a960de1eb7e7 || true 
+            --instance-id ${{secrets.INSTANCE_ID_1}} || true 
 
             aws ssm wait command-executed \
             --command-id $command_id \
-            --instance-id i-03e076b90fc93fcb1 || true 
+            --instance-id ${{secrets.INSTANCE_ID_2}} || true 
 
             for instance_id in i-079b8a960de1eb7e7 i-03e076b90fc93fcb1; do
               status=$(aws ssm list-command-invocations \
