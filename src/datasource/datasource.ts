@@ -1,4 +1,4 @@
-const { DataSource } = require('typeorm');
+import { DataSource } from 'typeorm';
 
 const dataSource = new DataSource({
   type: 'postgres',
@@ -7,20 +7,12 @@ const dataSource = new DataSource({
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: 'postgres',
-  logging: true,
   synchronize: false,
-  ssl: process.env.ENVIRONMENT === 'production' ? true : false,
-  extra:
-    process.env.ENVIRONMENT === 'production'
-      ? {
-          ssl: {
-            rejectUnauthorized:
-              process.env.ENVIRONMENT === 'production' ? false : true,
-          },
-        }
-      : null,
-  entities: [`${__dirname}/../**/**.entity{.ts,.js}`],
-  migrations: [`${__dirname}/../migrations/*{.ts,.js}`],
+  logging: true,
+  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+  migrations: [__dirname + '/../migrations/*{.ts,.js}'],
+  ssl: process.env.ENVIRONMENT === 'production',
+  extra: process.env.ENVIRONMENT === 'production' ? { ssl: { rejectUnauthorized: false } } : {},
 });
 
-module.exports = dataSource;
+export default dataSource;
