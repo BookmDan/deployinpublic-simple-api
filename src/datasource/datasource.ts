@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+const { DataSource } = require('typeorm');
 
 const dataSource = new DataSource({
   type: 'postgres',
@@ -23,4 +23,4 @@ const dataSource = new DataSource({
   migrations: [`${__dirname}/../migrations/*{.ts,.js}`],
 });
 
-export default dataSource;
+module.exports = dataSource;
