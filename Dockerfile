@@ -20,4 +20,4 @@ RUN npm run build
 EXPOSE 3001
 
 # Start the server using the production build
-CMD ["npm", "run", "start:prod"]
+CMD npm run migration:run && npm run start:prod 
