@@ -71,7 +71,7 @@ jobs:
               "echo Pulling Docker image",
               "docker pull ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.AWS_ECR_REPO }}",
               "echo Running Docker container",
-              "docker run -d -p 3000:3000 -e DB_HOST= ${{secrets.DB_HOST}} -e DB_PORT= ${{secrets.DB_PORT}}  -e DB_USERNAME= ${{secrets.DB_USERNAME}}  -e DB_PASSWORD= ${{secrets.DB_PASSWORD}}  -e DB_NAME= ${{secrets.DB_NAME}}  --name api ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.AWS_ECR_REPO }}"
+              "docker run -d -p 3002:3002 -e DB_HOST= ${{secrets.DB_HOST}} -e DB_PORT= ${{secrets.DB_PORT}}  -e DB_USERNAME= ${{secrets.DB_USERNAME}}  -e DB_PASSWORD= ${{secrets.DB_PASSWORD}}  -e DB_NAME= ${{secrets.DB_NAME}}  --name api ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.AWS_ECR_REPO }}"
               ]' \
             --query 'Command.CommandId' \
             --output text)

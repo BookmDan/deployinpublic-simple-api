@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Expose the port on which the app will run
-EXPOSE 3001
+EXPOSE 3002
 
 # Start the server using the production build
 CMD npm run migration:run && npm run start:prod 
