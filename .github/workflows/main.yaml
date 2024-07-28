@@ -80,7 +80,11 @@ jobs:
 
           echo ${{ env.command_id}}
           echo "Waiting for command to complete..."
+      - name: Wait for Docker Commands for Instance 1
+        run: |
           aws ssm wait command-executed --command-id $command_id --instance-id ${{ secrets.INSTANCE_ID_1 }}
+      - name: Wait for Docker Commands for Instance 2
+        run: |
           aws ssm wait command-executed --command-id $command_id --instance-id ${{ secrets.INSTANCE_ID_2 }}
           
           for instance_id in "${{ secrets.INSTANCE_ID_1 }}" "${{ secrets.INSTANCE_ID_2 }}"; do
