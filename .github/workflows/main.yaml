@@ -81,7 +81,7 @@ jobs:
             aws ssm wait command-executed \
             --command-id $command_id \
             --instance-id ${{secrets.INSTANCE_ID_2}} || true 
-            for instance_id in i-079b8a960de1eb7e7 i-03e076b90fc93fcb1; do
+            for instance_id in  ${{secrets.INSTANCE_ID_1}} ${{secrets.INSTANCE_ID_2}}; do
               status=$(aws ssm list-command-invocations \
               --command-id $command_id \
               --instance-id $instance_id \
