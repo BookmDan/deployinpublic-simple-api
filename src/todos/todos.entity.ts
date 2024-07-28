@@ -10,6 +10,9 @@ export class TodoEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({nullable: true})
+  title: string;
+
   @Column()
   description: string;
 
