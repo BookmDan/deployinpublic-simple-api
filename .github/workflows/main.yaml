@@ -71,13 +71,14 @@ jobs:
             "docker stop api || true",
             "docker rm api || true",
             "docker pull ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.AWS_ECR_REPO }}:latest",
-            "docker run -d -p 3001:3001 -e DB_HOST=${DB_HOST} -e DB_PORT=${DB_PORT} -e DB_USERNAME=${DB_USERNAME} -e DB_PASSWORD=${DB_PASSWORD} -e DB_NAME=${DB_NAME} -e ENVIRONMENT=production --name api ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.AWS_ECR_REPO }}:latest"
+            "docker run --rm -d -p 3001:3001 -e DB_HOST=${DB_HOST} -e DB_PORT=${DB_PORT} -e DB_USERNAME=${DB_USERNAME} -e DB_PASSWORD=${DB_PASSWORD} -e DB_NAME=${DB_NAME} -e ENVIRONMENT=production --name api ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.AWS_ECR_REPO }}:latest"
           ]' \
           --query 'Command.CommandId' \
           --output text)
           echo "Command ID: $command_id"
           echo "command_id=$command_id" >> $GITHUB_ENV
 
+          echo ${{ env.command_id}}
           echo "Waiting for command to complete..."
           aws ssm wait command-executed --command-id $command_id --instance-id ${{ secrets.INSTANCE_ID_1 }}
           aws ssm wait command-executed --command-id $command_id --instance-id ${{ secrets.INSTANCE_ID_2 }}
