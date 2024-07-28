@@ -82,14 +82,14 @@ jobs:
           echo "Waiting for command to complete..."
       - name: Wait for Docker Commands for Instance 1
         run: |
-          aws ssm wait command-executed --command-id $command_id --instance-id ${{ secrets.INSTANCE_ID_1 }}
+          aws ssm wait command-executed --command-id ${{ env.command_id}} --instance-id ${{ secrets.INSTANCE_ID_1 }}
       - name: Wait for Docker Commands for Instance 2
         run: |
-          aws ssm wait command-executed --command-id $command_id --instance-id ${{ secrets.INSTANCE_ID_2 }}
+          aws ssm wait command-executed --command-id ${{ env.command_id}} --instance-id ${{ secrets.INSTANCE_ID_2 }}
           
           for instance_id in "${{ secrets.INSTANCE_ID_1 }}" "${{ secrets.INSTANCE_ID_2 }}"; do
             status=$(aws ssm list-command-invocations \
-              --command-id $command_id \
+              --command-id ${{ env.command_id}} \
               --instance-id $instance_id \
               --query "CommandInvocations[0].Status" \
               --output text)
@@ -97,7 +97,7 @@ jobs:
             if [ "$status" != "Success" ]; then
               echo "Fetching command invocation details for instance $instance_id"
               aws ssm list-command-invocations \
-                --command-id $command_id \
+                --command-id ${{ env.command_id}} \
                 --instance-id $instance_id \
                 --details \
                 --output json | jq -r '.CommandInvocations[0].CommandPlugins[].Output'
