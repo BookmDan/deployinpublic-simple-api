@@ -84,11 +84,7 @@ jobs:
             echo "Instance $instance_id status: $status"
             if [ "$status" != "Success" ]; then
               echo "Fetching command invocation details for instance $instance_id"
-              aws ssm list-command-invocations \
-                --command-id $command_id \
-                --instance-id $instance_id \
-                --details \
-                --output json | jq -r '.CommandInvocations[0].CommandPlugins[].Output'
+              aws ssm list-command-invocations --command-id $command_id --instance-id $instance_id --details
               echo "Command failed on instance $instance_id"
               exit 1
             fi
