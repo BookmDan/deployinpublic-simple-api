@@ -62,6 +62,8 @@ jobs:
           DB_NAME: ${{ secrets.DB_NAME }}
         run: |
           echo "Deploying to EC2..."
+      - name: Pull and Run Docker Image from ECR
+        run: |
           command_id=$(aws ssm send-command \
           --document-name "AWS-RunShellScript" \
           --targets "Key=instanceIds,Values=${{ secrets.INSTANCE_ID_1 }},${{ secrets.INSTANCE_ID_2 }}" \
