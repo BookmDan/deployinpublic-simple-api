@@ -43,8 +43,6 @@ jobs:
             --comment "Deploy Docker container" \
             --parameters commands='[
               "aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_REGISTRY",
-              "docker stop api || true",
-              "docker rm api || true",
               "docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG",
               "docker run -d -p 3000:3000 -e DB_HOST=${{ secrets.DB_HOST }} -e DB_USERNAME=${{ secrets.DB_USERNAME }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e ENVIRONMENT=production --name api $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
             ]' \
@@ -54,3 +52,23 @@ jobs:
           echo "Waiting for command to complete..."
           aws ssm wait command-executed --command-id $command_id --instance-id ${{ secrets.INSTANCE_ID_1 }}
           aws ssm wait command-executed --command-id $command_id --instance-id ${{ secrets.INSTANCE_ID_2 }}
+          
+          for instance_id in "${{ secrets.INSTANCE_ID_1 }}" "${{ secrets.INSTANCE_ID_2 }}"; do
+            status=$(aws ssm list-command-invocations \
+              --command-id $command_id \
+              --instance-id $instance_id \
+              --query "CommandInvocations[0].Status" \
+              --output text)
+            echo "Instance $instance_id status: $status"
+            if [ "$status" != "Success" ]; then
+              echo "Fetching command invocation details for instance $instance_id"
+              aws ssm list-command-invocations \
+                --command-id $command_id \
+                --instance-id $instance_id \
+                --details \
+                --output json | jq -r '.CommandInvocations[0].CommandPlugins[].Output'
+              echo "Command failed on instance $instance_id"
+              exit 1
+            fi
+          done
+          echo "Command executed successfully on all instances"
