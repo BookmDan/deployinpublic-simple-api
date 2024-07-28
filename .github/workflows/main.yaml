@@ -56,22 +56,19 @@ jobs:
       - name: Deploy to EC2
         run: |
           echo "Deploying to EC2..."
-          ecr_registry="${{ steps.login-aws-ecr.outputs.registry }}"
-          ecr_repository="${{ secrets.AWS_ECR_REPO }}"
-          image_tag="latest"
           command_id=$(aws ssm send-command \
-            --document-name "AWS-RunShellScript" \
-            --targets "Key=instanceids,Values=${{ secrets.INSTANCE_ID_1 }},${{ secrets.INSTANCE_ID_2 }}" \
-            --comment "Deploy Docker container" \
-            --parameters commands='[
-              "aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_REGISTRY",
-              "docker stop api || true",
-              "docker rm api || true",
-              "docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG",
-              "docker run -d -p 3000:3000 --name api $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-            ]' \
-            --query 'Command.CommandId' \
-            --output text)
+          --document-name "AWS-RunShellScript" \
+          --targets "Key=instanceids,Values=${{ secrets.INSTANCE_ID_1 }},${{ secrets.INSTANCE_ID_2 }}" \
+          --comment "Deploy Docker container" \
+          --parameters commands='[
+            "aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ steps.login-aws-ecr.outputs.registry }}",
+            "docker stop api || true",
+            "docker rm api || true",
+            "docker pull ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.AWS_ECR_REPO }}:latest",
+            "docker run -d -p 3000:3000 --name api  ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.AWS_ECR_REPO }}:latest"
+          ]' \
+          --query 'Command.CommandId' \
+          --output text)
           echo "Command ID: $command_id"
 
           echo "Waiting for command to complete..."
