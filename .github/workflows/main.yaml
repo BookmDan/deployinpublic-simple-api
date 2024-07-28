@@ -76,6 +76,7 @@ jobs:
           --query 'Command.CommandId' \
           --output text)
           echo "Command ID: $command_id"
+          echo "command_id=$command_id" >> $GITHUB_ENV
 
           echo "Waiting for command to complete..."
           aws ssm wait command-executed --command-id $command_id --instance-id ${{ secrets.INSTANCE_ID_1 }}
