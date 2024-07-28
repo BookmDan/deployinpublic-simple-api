@@ -59,7 +59,7 @@ jobs:
             image="$ecr_registry/$ecr_repository:$image_tag"
             command_id=$(aws ssm send-command \
             --document-name "AWS-RunShellScript" \
-            --targets "Key=instanceids,Values=${{secrets.INSTANCE_ID_1}},${{secrets.INSTANCE_ID_2}}" \
+            --targets "Key=instanceIds,Values=${{secrets.INSTANCE_ID_1}},${{secrets.INSTANCE_ID_2}}" \
             --comment "Pull Docker image and run it" \
             --parameters commands='[
               "echo Logging into ECR",
@@ -70,7 +70,7 @@ jobs:
               "echo Pulling Docker image",
               "docker pull ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.AWS_ECR_REPO }}",
               "echo Running Docker container",
-              "docker run -d -p 3000:3000 -e ENVIRONMENT=production --name api ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.AWS_ECR_REPO }}"
+              "docker run -d -p 3000:3000 -e DB_HOST=${{secrets.DB_HOST}} -e DB_USERNAME=${{secrets.DB_USERNAME}} -e DB_PASSWORD=${{secrets.DB_PASSWORD}} -e ENVIRONMENT=production --name api ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.AWS_ECR_REPO }}"
               ]' \
             --query 'Command.CommandId' \
             --output text)
@@ -81,21 +81,22 @@ jobs:
             aws ssm wait command-executed \
             --command-id $command_id \
             --instance-id ${{secrets.INSTANCE_ID_2}} || true 
-            status=$(aws ssm list-command-invocations \
-            --command-id $command_id \
-            --instance-id $instance_id \
-            --query "CommandInvocations[0].Status" \
-            --output text)
-            echo "Instance $instance_id status: $status"
-            if [ "$status" != "Success" ]; then
-              echo "Fetching command invocation details for instance $instance_id"
-              aws ssm list-command-invocations \
-                --command-id $command_id \
-                --instance-id $instance_id \
-                --details \
-                --output json | jq -r '.CommandInvocations[0].CommandPlugins[].Output'
-              echo "Command failed on instance $instance_id"
-              exit 1
-            fi
+            for instance_id in "${{secrets.INSTANCE_ID_1}}" "${{secrets.INSTANCE_ID_2}}"; do
+              status=$(aws ssm list-command-invocations \
+              --command-id $command_id \
+              --instance-id $instance_id \
+              --query "CommandInvocations[0].Status" \
+              --output text)
+              echo "Instance $instance_id status: $status"
+              if [ "$status" != "Success" ]; then
+                echo "Fetching command invocation details for instance $instance_id"
+                aws ssm list-command-invocations \
+                  --command-id $command_id \
+                  --instance-id $instance_id \
+                  --details \
+                  --output json | jq -r '.CommandInvocations[0].CommandPlugins[].Output'
+                echo "Command failed on instance $instance_id"
+                exit 1
+              fi
             done
             echo "Command executed successfully on all instances"
