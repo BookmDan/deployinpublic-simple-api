@@ -6,12 +6,19 @@ const dataSource = new DataSource({
   port: 5432,
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  database: 'postgres',
   logging: true,
   synchronize: false,
-  ssl: process.env.ENVIRONMENT === 'production' ? {
-    rejectUnauthorized: false
-  } : undefined,
+  ssl: process.env.ENVIRONMENT === 'production' ? true : false,
+  extra:
+    process.env.ENVIRONMENT === 'production'
+      ? {
+          ssl: {
+            rejectUnauthorized:
+              process.env.ENVIRONMENT === 'production' ? false : true,
+          },
+        }
+      : null,
   entities: [`${__dirname}/../**/**.entity{.ts,.js}`],
   migrations: [`${__dirname}/../migrations/*{.ts,.js}`],
 });

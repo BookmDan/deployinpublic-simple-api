@@ -19,8 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
-    "migration:generate": "npm run typeorm -- -d ./src/datasource/datasource.ts migration:generate ./src/migrations/edit-todos-table",
-    "migration:run": "npm run typeorm migration:run -- -d ./src/datasource/datasource.ts"
+    "migration:run": "npm run typeorm migration:run -- -d ./src/datasource/datasource.ts",
+    "migration:generate": "npm run typeorm -- -d ./src/datasource/datasource.ts migration:generate ./src/migrations/add_title_tables"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
