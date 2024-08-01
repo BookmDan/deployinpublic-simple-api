@@ -1,3 +1,4 @@
+
 name: Deploy
 on:
   push:
@@ -111,18 +112,16 @@ jobs:
           echo "Command ID: $command_id"
           echo "command_id=$command_id" >> $GITHUB_ENV
 
-          echo ${{ env.command_id}}
           echo "Waiting for command to complete..."
-      - name: Waiting for Docker Commands to Complete on Instance 1
+
+      - name: Waiting for Docker Commands to Complete on Instances
         run: |
-          aws ssm wait command-executed --command-id ${{ env.command_id}} --instance-id ${{ secrets.INSTANCE_ID_1 }}
-      - name: Waiting for Docker Commands to Complete on Instance 2
-        run: |
-          aws ssm wait command-executed --command-id ${{ env.command_id}} --instance-id ${{ secrets.INSTANCE_ID_2 }}
-          
           for instance_id in "${{ secrets.INSTANCE_ID_1 }}" "${{ secrets.INSTANCE_ID_2 }}"; do
+            aws ssm wait command-executed \
+              --command-id ${{ env.command_id }} \
+              --instance-id $instance_id
             status=$(aws ssm list-command-invocations \
-              --command-id ${{ env.command_id}} \
+              --command-id ${{ env.command_id }} \
               --instance-id $instance_id \
               --query "CommandInvocations[0].Status" \
               --output text)
@@ -130,7 +129,7 @@ jobs:
             if [ "$status" != "Success" ]; then
               echo "Fetching command invocation details for instance $instance_id"
               aws ssm list-command-invocations \
-                --command-id ${{ env.command_id}} \
+                --command-id ${{ env.command_id }} \
                 --instance-id $instance_id \
                 --details \
                 --output json | jq -r '.CommandInvocations[0].CommandPlugins[].Output'
