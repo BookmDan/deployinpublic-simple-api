@@ -68,7 +68,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   deploy-api:
-    name: Deploy to EC2
+    name: Deploy API to EC2
     runs-on: ubuntu-latest
     needs: build-api
     steps:
@@ -105,7 +105,7 @@ jobs:
             "docker stop api || true",
             "docker rm api || true",
             "docker pull ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.API_IMAGE_REPO }}:latest",
-            "docker run -d -p 3001:3001 -e DB_HOST=${DB_HOST} -e DB_PORT=${DB_PORT} -e DB_USERNAME=${DB_USERNAME} -e DB_PASSWORD=${DB_PASSWORD} -e DB_NAME=${DB_NAME} -e ENVIRONMENT=production --name api ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.API_IMAGE_REPO }}:latest"
+            "docker run -d -p 3000:3000 -e DB_HOST=${DB_HOST} -e DB_PORT=${DB_PORT} -e DB_USERNAME=${DB_USERNAME} -e DB_PASSWORD=${DB_PASSWORD} -e DB_NAME=${DB_NAME} -e ENVIRONMENT=production --name api ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.API_IMAGE_REPO }}:latest"
           ]' \
           --query 'Command.CommandId' \
           --output text)
@@ -138,3 +138,77 @@ jobs:
             fi
           done
           echo "Command executed successfully on all instances"
+
+  
+  deploy-frontend:
+    name: Deploy Frontend to EC2
+    runs-on: ubuntu-latest
+    needs: build-frontend
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Log into AWS ECR
+        id: login-aws-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to EC2
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+        run: |
+          echo "Deploying to EC2..."
+      - name: Pull and Run Docker Image from ECR
+        run: |
+          command_id=$(aws ssm send-command \
+          --document-name "AWS-RunShellScript" \
+          --targets "Key=instanceIds,Values=${{ secrets.INSTANCE_ID_1 }},${{ secrets.INSTANCE_ID_2 }}" \
+          --comment "Deploy Docker container" \
+          --parameters commands='[
+            "aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ steps.login-aws-ecr.outputs.registry }}",
+            "docker stop frontend || true",
+            "docker rm frontend || true",
+            "docker pull ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.FRONTEND_IMAGE_REPO }}:latest",
+            "docker run -d -p 80:80 -e DB_HOST=${DB_HOST} -e DB_PORT=${DB_PORT} -e DB_USERNAME=${DB_USERNAME} -e DB_PASSWORD=${DB_PASSWORD} -e DB_NAME=${DB_NAME} -e ENVIRONMENT=production --name frontend ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.FRONTEND_IMAGE_REPOO }}:latest"
+          ]' \
+          --query 'Command.CommandId' \
+          --output text)
+          echo "Command ID: $command_id"
+          echo "command_id=$command_id" >> $GITHUB_ENV
+
+          echo "Waiting for command to complete..."
+
+      - name: Waiting for Docker Commands to Complete on Instances
+        run: |
+          for instance_id in "${{ secrets.INSTANCE_ID_1 }}" "${{ secrets.INSTANCE_ID_2 }}"; do
+            aws ssm wait command-executed \
+              --command-id ${{ env.command_id }} \
+              --instance-id $instance_id
+            status=$(aws ssm list-command-invocations \
+              --command-id ${{ env.command_id }} \
+              --instance-id $instance_id \
+              --query "CommandInvocations[0].Status" \
+              --output text)
+            echo "Instance $instance_id status: $status"
+            if [ "$status" != "Success" ]; then
+              echo "Fetching command invocation details for instance $instance_id"
+              aws ssm list-command-invocations \
+                --command-id ${{ env.command_id }} \
+                --instance-id $instance_id \
+                --details \
+                --output json | jq -r '.CommandInvocations[0].CommandPlugins[].Output'
+              echo "Command failed on instance $instance_id"
+              exit 1
+            fi
+          done
+          echo "Command executed successfully on all instances"
+
