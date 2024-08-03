@@ -178,7 +178,7 @@ jobs:
             "docker stop frontend || true",
             "docker rm frontend || true",
             "docker pull ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.FRONTEND_IMAGE_REPO }}:latest",
-            "docker run -d -p 80:80 -e DB_HOST=${DB_HOST} -e DB_PORT=${DB_PORT} -e DB_USERNAME=${DB_USERNAME} -e DB_PASSWORD=${DB_PASSWORD} -e DB_NAME=${DB_NAME} -e ENVIRONMENT=production --name frontend ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.FRONTEND_IMAGE_REPO }}:latest"
+            "docker run -d -p 80:80 --name frontend ${{ steps.login-aws-ecr.outputs.registry }}/${{ secrets.FRONTEND_IMAGE_REPO }}:latest"
           ]' \
           --query 'Command.CommandId' \
           --output text)
