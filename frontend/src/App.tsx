@@ -3,6 +3,7 @@ import "./App.css";
 import Todo from "./Todo";
 import axios from "axios";
 import {host} from './constants'
+
 export type TodoDTO = {
   id: number;
   title: string;
@@ -23,7 +24,7 @@ function App() {
 
   useEffect(() => {
     console.log("HOST", host)
-    axios.get("http://localhost:3000/api/todos").then((response) => {
+    axios.get(`http://localhost/api/todos`).then((response) => {
       setTodos(response.data);
     });
   }, []);
@@ -42,7 +43,7 @@ function App() {
   };
 
   const addTodo = () => {
-    axios.post("http://localhost:3000/api/todos", newTodo).then((response) => {
+    axios.post(`http://localhost/api/todos`, newTodo).then((response) => {
       setTodos(response.data);
     });
   };

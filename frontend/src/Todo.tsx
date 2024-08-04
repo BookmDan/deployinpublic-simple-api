@@ -2,6 +2,7 @@ import { useState } from "react";
 import { TodoDTO } from "./App";
 import axios from "axios";
 import { FaEdit, FaCheck } from "react-icons/fa";
+// import {host} from "./constants";
 
 type Props = {
   todo: TodoDTO;
