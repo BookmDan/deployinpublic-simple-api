@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import Todo from "./Todo";
 import axios from "axios";
-import {host} from './constants'
+// import {host} from './constants'
 
 export type TodoDTO = {
   id: number;
