@@ -20,11 +20,11 @@ const Todo = ({ todo, updateTodos }: Props) => {
     setNewTitle(e.target.value);
   };
 
-  // const handleDescriptionChange = (
-  //   e: React.ChangeEvent<HTMLTextAreaElement>
-  // ) => {
-  //   setNewDescription(e.target.value);
-  // };
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setNewDescription(e.target.value);
+  };
 
   // const editTodo = (key: string, value: string | boolean) => {
   //   const updatedTodo = { ...todo, [key]: value };
