@@ -23,7 +23,7 @@ function App() {
   });
 
   useEffect(() => {
-    console.log("HOST", host)
+    // console.log("HOST", host)
     axios.get("http://localhost:3000/api/todos").then((response) => {
       setTodos(response.data);
     });
