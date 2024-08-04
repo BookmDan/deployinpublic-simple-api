@@ -20,22 +20,49 @@ const Todo = ({ todo, updateTodos }: Props) => {
     setNewTitle(e.target.value);
   };
 
-  const handleDescriptionChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    setNewDescription(e.target.value);
-  };
+  // const handleDescriptionChange = (
+  //   e: React.ChangeEvent<HTMLTextAreaElement>
+  // ) => {
+  //   setNewDescription(e.target.value);
+  // };
+
+  // const editTodo = (key: string, value: string | boolean) => {
+  //   const updatedTodo = { ...todo, [key]: value };
+  //   axios
+  //     .put(`http://${host}/api/todos/${todo.id}`, {
+  //       todo: updatedTodo,
+  //     })
+  //     .then((response) => {
+  //       updateTodos(response.data);
+  //     });
+  // };
 
   const editTodo = (key: string, value: string | boolean) => {
     const updatedTodo = { ...todo, [key]: value };
     axios
-      .put(`http://${host}/api/todos/${todo.id}`, {
-        todo: updatedTodo,
-      })
+      .put(`http://${host}/api/todos/${todo.id}`, updatedTodo)
       .then((response) => {
         updateTodos(response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error updating the todo!", error);
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log("Response data:", error.response.data);
+          console.log("Response status:", error.response.status);
+          console.log("Response headers:", error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.log("Request data:", error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log("Error message:", error.message);
+        }
+        console.log("Config:", error.config);
       });
   };
+  
 
   return (
     <div
