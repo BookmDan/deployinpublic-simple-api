@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-api-deployment
+  labels:
+    app: todo
+    tier: api 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: todo
+      tier: api 
+  template:
+    metadata:
+      labels:
+        app: todo
+        tier: api 
+    spec:
+      containers:
+      - name: todo-api 
+        env:
+        - name: DB_HOST
+          value: cwc-rds-instance.cb2oogw8ioev.us-east-1.rds.amazonaws.com
+        - name: DB_USERNAME
+          value: postgres
+        - name: DB_PASSWORD
+          value: postgres
+        - name: ENVIRONMENT
+          value: production
+        image: 637423610157.dkr.ecr.us-east-1.amazonaws.com/cwc-api-ecr:latest
+        ports:
+        - containerPort: 3000

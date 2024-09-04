@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: database-migration-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: database-migration
+        image: 637423610157.dkr.ecr.us-east-1.amazonaws.com/cwc-api-ecr:latest
+        env:
+        - name: DB_HOST
+          value: cwc-rds-instance.cb2oogw8ioev.us-east-1.rds.amazonaws.com
+        - name: DB_USERNAME
+          value: postgres
+        - name: DB_PASSWORD
+          value: postgres
+        - name: ENVIRONMENT
+          value: production
+        command: ["npm",  "run", "migration:run"]
+      restartPolicy: Never
+  backoffLimit: 1
+
