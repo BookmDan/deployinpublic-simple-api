@@ -21,13 +21,13 @@ spec:
       - name: todo-api 
         env:
         - name: DB_HOST
-          value: cwc-rds-instance.cb2oogw8ioev.us-east-1.rds.amazonaws.com
+          value: {{.Values.database.host}}
         - name: DB_USERNAME
-          value: postgres
+          value: {{.Values.database.username}}
         - name: DB_PASSWORD
-          value: postgres
+          value: {{.Values.database.password}}
         - name: ENVIRONMENT
-          value: production
+          value: {{.Values.environment}}
         image: 637423610157.dkr.ecr.us-east-1.amazonaws.com/cwc-api-ecr:latest
         ports:
         - containerPort: 3000
