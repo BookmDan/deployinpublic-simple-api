@@ -13,9 +13,9 @@ enviornment: production
 api: 
   image:
     respository: 637423610157.dkr.ecr.us-east-1.amazonaws.com/cwc-api-ecr
-    tag: latest
+    tag: v1
 
 frontend: 
   image:
     respository: 637423610157.dkr.ecr.us-east-1.amazonaws.com/cwc-frontend-ecr
-    tag: latest
+    tag: v1
