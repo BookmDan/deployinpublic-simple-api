@@ -1,13 +1,14 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: database-migration-job
+  name: database-migration-job-{{.Values.api.image.tag}}
 spec:
   template:
     spec:
+      ttlSecondsAfterFinished: 10
       containers:
       - name: database-migration
-        image: 637423610157.dkr.ecr.us-east-1.amazonaws.com/cwc-api-ecr:latest
+        image: "{{.Values.api.image.repository}}:{{.Values.api.image.tag}}"
         env:
         - name: DB_HOST
           value: {{.Values.database.host}}

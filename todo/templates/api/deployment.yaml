@@ -28,6 +28,6 @@ spec:
           value: {{.Values.database.password}}
         - name: ENVIRONMENT
           value: {{.Values.environment}}
-        image: 637423610157.dkr.ecr.us-east-1.amazonaws.com/cwc-api-ecr:latest
+        image: "{{.Values.api.image.repository}}:{{.Values.api.image.tag}}"
         ports:
         - containerPort: 3000

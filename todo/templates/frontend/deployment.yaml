@@ -19,6 +19,6 @@ spec:
     spec:
       containers:
       - name: todo-frontend 
-        image:  637423610157.dkr.ecr.us-east-1.amazonaws.com/cwc-frontend-ecr:latest
+        image:  "{{.Values.frontend.image.repository}}:{{.Values.frontend.image.tag}}"
         ports:
         - containerPort: 80
