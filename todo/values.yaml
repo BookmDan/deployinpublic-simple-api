@@ -1,0 +1,21 @@
+# Default values for todo.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+#
+database: 
+  host: cwc-rds-instance.cb2oogw8ioev.us-east-1.rds.amazonaws.com
+  username: postgres
+  password: postgres
+
+enviornment: production
+
+api: 
+  image:
+    respository: 637423610157.dkr.ecr.us-east-1.amazonaws.com/cwc-api-ecr
+    tag: v2
+
+frontend: 
+  image:
+    respository: 637423610157.dkr.ecr.us-east-1.amazonaws.com/cwc-frontend-ecr
+    tag: v2
