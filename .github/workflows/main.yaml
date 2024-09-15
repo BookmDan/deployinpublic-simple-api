@@ -95,16 +95,24 @@ jobs:
           echo "Installing AWS CLI..."
           sudo apt-get update
           sudo apt-get install -y awscli
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Configure kubectl
         run: |
-          echo "configuring kubectl..."
+          echo "Configuring kubectl..."
           aws eks update-kubeconfig --name ${{ secrets.K8S_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
-      - name: Install /Update Helm Chart 
-        run: | 
-          echo "installing/ updating helm chart..."
-          helm upgrade todo-app ./todo \
-            --set database.host="${{ secrets.DB_HOST }}" \
-            --set database.username="${{ secrets.DB_USERNAME }}" \
-            --set database.password="${{ secrets.DB_PASSWORD }}" \
-            --set api.image.repository="${{ secrets.API_IMAGE_URI }}" \
-            --set frontend.image.repository="${{ secrets.FRONTEND_IMAGE_URI }}"
+
+      - name: Verify kubectl connection
+        run: |
+          kubectl get nodes
+
+      - name: Install / Update Helm Chart 
+        run: |
+          echo "Installing / updating Helm chart..."
+          helm upgrade todo-app ./todo --set database.host=${{ secrets.DB_HOST }} --set database.username=${{ secrets.DB_USERNAME }} --set database.password=${{ secrets.DB_PASSWORD }} --set api.image.repository=${{ secrets.API_IMAGE_URI }} --set frontend.image.repository=${{ secrets.FRONTEND_IMAGE_URI }}
