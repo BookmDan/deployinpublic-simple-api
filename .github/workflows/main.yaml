@@ -70,7 +70,7 @@ jobs:
   deploy:
     name: Deploy to EKS 
     needs: [build-api, build-frontend]
-    runs-on: arc-runner-set
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
