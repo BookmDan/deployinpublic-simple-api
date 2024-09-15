@@ -69,7 +69,7 @@ jobs:
 
   deploy:
     name: Deploy to EKS 
-    runs-on: arc-runner-set
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -94,7 +94,6 @@ jobs:
         run: |
           echo "configuring kubectl..."
           aws eks update-kubeconfig --name ${{secrets.K8S_CLUSTER_NAME}} --name ${{ secrets.AWS_REGION}}
-
       - name: Install /Update Helm Chart 
         run: | 
           echo "installing/ updating helm chart..."
