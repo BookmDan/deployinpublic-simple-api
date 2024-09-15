@@ -93,7 +93,8 @@ jobs:
       - name: Configure kubectl
         run: |
           echo "configuring kubectl..."
-          aws eks update-kubeconfig --name ${{secrets.K8S_CLUSTER_NAME}} --name ${{ secrets.AWS_REGION}}
+          aws eks update-kubeconfig --name ${{ secrets.K8S_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+
       - name: Install /Update Helm Chart 
         run: | 
           echo "installing/ updating helm chart..."
