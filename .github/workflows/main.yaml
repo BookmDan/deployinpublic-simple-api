@@ -29,7 +29,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-aws-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.API_IMAGE_REPO }}
-          IMAGE_TAG: v2
+          IMAGE_TAG: ${{github.sha}}
         run: |
           echo "Building Docker image..."
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./api
@@ -60,7 +60,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-aws-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.FRONTEND_IMAGE_REPO }}
-          IMAGE_TAG: v2
+          IMAGE_TAG: ${{github.sha}}
         run: |
           echo "Building Docker image..."
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./frontend
@@ -118,4 +118,7 @@ jobs:
             --set database.username="${{ secrets.DB_USERNAME }}" \
             --set database.password="${{ secrets.DB_PASSWORD }}" \
             --set api.image.repository="${{ secrets.API_IMAGE_URI }}" \
-            --set frontend.image.repository="${{ secrets.FRONTEND_IMAGE_URI }}"
+            --set frontend.image.repository="${{ secrets.FRONTEND_IMAGE_URI }}" \
+            --set api.image.tag=${{github.sha}}
+            --set frontend.image.tag=${{github.sha}}
+
