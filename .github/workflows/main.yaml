@@ -119,10 +119,10 @@ jobs:
           echo "Configuring kubectl..."
           aws eks update-kubeconfig --name ${{ secrets.K8S_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
 
-      - name: Verify kubectl connection
-        run: |
-          kubectl get nodes
-          
+      # - name: Verify kubectl connection
+      #   run: |
+      #     kubectl get nodes
+
       - name: Install / Update Helm Chart 
         run: |
           echo "Installing / updating Helm chart..."
