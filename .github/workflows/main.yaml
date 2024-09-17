@@ -121,4 +121,3 @@ jobs:
             --set frontend.image.repository="${{ secrets.FRONTEND_IMAGE_URI }}" \
             --set api.image.tag=${{github.sha}}
             --set frontend.image.tag=${{github.sha}}
-
