@@ -4,31 +4,31 @@ metadata:
   name: todo-api-deployment
   labels:
     app: todo
-    tier: api 
+    tier: api
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: todo
-      tier: api 
+      tier: api
   template:
     metadata:
       labels:
         app: todo
-        tier: api 
+        tier: api
     spec:
       containers:
-      - name: todo-api 
+      - name: todo-api
+        image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
         env:
         - name: DB_HOST
-          value: {{.Values.database.host}}
+          value: "{{ .Values.database.host }}"
         - name: DB_USERNAME
-          value: {{.Values.database.username}}
+          value: "{{ .Values.database.username }}"
         - name: DB_PASSWORD
-          value: {{.Values.database.password}}
+          value: "{{ .Values.database.password }}"
         - name: ENVIRONMENT
-          value: {{.Values.environment}}
-        image: "{{.Values.api.image.repository}}:{{.Values.api.image.tag}}"
+          value: "{{ .Values.environment }}"
         ports:
         - containerPort: 3000
         readinessProbe:
@@ -37,4 +37,3 @@ spec:
             port: 3000
           initialDelaySeconds: 2
           periodSeconds: 2
-

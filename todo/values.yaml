@@ -8,7 +8,7 @@ database:
   username: ""
   password: ""
 
-enviornment: production
+environment: production
 
 api: 
   image:
